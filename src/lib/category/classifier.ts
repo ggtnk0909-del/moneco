@@ -1,5 +1,5 @@
 import type { Category } from '@/types';
-import { CATEGORY_RULES } from './rules';
+import { CATEGORY_RULES } from './rules/index';
 import { loadCustomRules, type CustomRules } from './customRules';
 
 /**

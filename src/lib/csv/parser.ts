@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
 import type { Transaction } from '@/types';
-import { detectFormat, parseDate, parseAmount } from './formats';
+import { detectFormat, parseDate, parseAmount } from './formats/index';
 import { classify } from '../category/classifier';
 import { loadCustomRules } from '../category/customRules';
 
