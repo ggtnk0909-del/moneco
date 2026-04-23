@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+svg:focus,
+svg *:focus {
+  outline: none;
+}
+
+/* 金融数値は等幅数字で桁を揃える */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* キーボード操作時のフォーカスリング（マウスクリック時は非表示） */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #111827 !important;
+  outline-offset: 2px;
+}
