@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { MonthSummary } from '@/types';
+import { useT } from '@/i18n';
 
 interface Props {
   data: MonthSummary[];
@@ -28,8 +29,9 @@ const CARD_COLOR_CURRENT = '#555555';
 const CARD_COLOR_OTHER   = '#cccccc';
 
 export default function MonthlyBarChart({ data, currentMonth, onMonthSelect }: Props) {
+  const t = useT();
   const chartData = data.map((d) => ({
-    month: `${parseInt(d.month.slice(5), 10)}月`,
+    month: t.chart.monthLabel(parseInt(d.month.slice(5), 10)),
     bank: d.bySource.bank,
     card: d.bySource.card,
     key: d.month,
@@ -38,15 +40,15 @@ export default function MonthlyBarChart({ data, currentMonth, onMonthSelect }: P
 
   return (
     <div>
-      <div className="text-xs font-bold text-gray-500 mb-1">月別支出推移（円）</div>
+      <div className="text-xs font-bold text-gray-500 mb-1">{t.chart.monthlyTitle}</div>
       <div className="flex items-center gap-3 mb-2">
         <div className="flex items-center gap-1">
           <div className="w-2.5 h-2.5 rounded-sm" style={{ background: BANK_COLOR_CURRENT }} />
-          <span className="text-xs text-gray-500">銀行</span>
+          <span className="text-xs text-gray-500">{t.chart.bank}</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-2.5 h-2.5 rounded-sm" style={{ background: CARD_COLOR_CURRENT }} />
-          <span className="text-xs text-gray-500">カード</span>
+          <span className="text-xs text-gray-500">{t.chart.card}</span>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={120}>
@@ -58,7 +60,7 @@ export default function MonthlyBarChart({ data, currentMonth, onMonthSelect }: P
           <Tooltip
             formatter={(value, name) => [
               typeof value === 'number' ? `¥${value.toLocaleString()}` : value,
-              name === 'bank' ? '銀行' : 'カード',
+              name === 'bank' ? t.chart.bank : t.chart.card,
             ]}
             contentStyle={{ fontSize: 11, padding: '4px 8px' }}
             cursor={{ fill: 'rgba(0,0,0,0.04)' }}

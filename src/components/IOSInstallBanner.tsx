@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useT } from '@/i18n';
 
 /**
  * iOS Safari でのみ表示するホーム画面追加バナー。
@@ -8,6 +9,7 @@ import { useEffect, useState } from 'react';
  * データ入力前にPWAインストールを促す必要がある。
  */
 export default function IOSInstallBanner() {
+  const t = useT();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -25,8 +27,8 @@ export default function IOSInstallBanner() {
 
   return (
     <div className="bg-blue-50 border-b border-blue-200 px-4 py-3 text-xs text-blue-800">
-      <div className="font-bold mb-0.5">ホーム画面に追加するとデータが保持されます</div>
-      <div>Safari の「共有」→「ホーム画面に追加」でアプリとして使えます。</div>
+      <div className="font-bold mb-0.5">{t.banners.iosTitle}</div>
+      <div>{t.banners.iosBody}</div>
       <button
         className="mt-1.5 underline"
         onClick={() => {
@@ -34,7 +36,7 @@ export default function IOSInstallBanner() {
           setShow(false);
         }}
       >
-        閉じる
+        {t.banners.iosDismiss}
       </button>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import type { MonthSummary, Category } from '@/types';
+import { useT } from '@/i18n';
 
 const SELECTED_COLOR = '#1a1a1a';
 // 項目色はインデックス1から（0番=#1a1a1aは選択色として予約）
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export default function CategoryPieChart({ summary }: Props) {
+  const t = useT();
   const [active, setActive] = useState<string | null>(null);
 
   const data = Object.keys(summary.byCategory)
@@ -37,7 +39,7 @@ export default function CategoryPieChart({ summary }: Props) {
 
   return (
     <div>
-      <div className="text-xs font-bold text-gray-500 mb-2">カテゴリ別（今月）</div>
+      <div className="text-xs font-bold text-gray-500 mb-2">{t.chart.byCategory}</div>
 
       {/* 固定表示エリア */}
       <div className="h-8 mb-2 flex items-center">
@@ -57,7 +59,7 @@ export default function CategoryPieChart({ summary }: Props) {
           </div>
         ) : (
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-gray-400">合計</span>
+            <span className="text-xs text-gray-400">{t.chart.total}</span>
             <span className="text-xs font-bold text-gray-700 tabular-nums">¥{total.toLocaleString()}</span>
           </div>
         )}

@@ -1,12 +1,14 @@
 'use client';
 
 import { storageUsageRatio } from '@/lib/storage/store';
+import { useT } from '@/i18n';
 
 interface Props {
   onDismiss: () => void;
 }
 
 export default function StorageCapacityBanner({ onDismiss }: Props) {
+  const t = useT();
   const ratio = storageUsageRatio();
   if (ratio < 0.8) return null;
 
@@ -21,9 +23,7 @@ export default function StorageCapacityBanner({ onDismiss }: Props) {
           : 'bg-yellow-50 border-b border-yellow-200 text-yellow-800'
       }`}
     >
-      <span>
-        ストレージ使用量: {pct}%{isCritical ? '（空き容量不足）' : '（残りわずか）'}
-      </span>
+      <span>{t.banners.storage(pct, isCritical)}</span>
       <button onClick={onDismiss} className="ml-2 opacity-60">
         ✕
       </button>

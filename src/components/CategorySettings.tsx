@@ -12,8 +12,10 @@ import {
   allCategories,
   type CustomRules,
 } from '@/lib/category/customRules';
+import { useT } from '@/i18n';
 
 export default function CategorySettings() {
+  const t = useT();
   const [rules, setRules] = useState<CustomRules | null>(null);
   const [cats, setCats] = useState<string[]>([]);
   const [openCat, setOpenCat] = useState<string | null>(null);
@@ -63,10 +65,10 @@ export default function CategorySettings() {
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-800">{cat}</span>
                 {keywords.length > 0 && (
-                  <span className="text-xs text-gray-400">キーワード {keywords.length}件</span>
+                  <span className="text-xs text-gray-400">{t.settings.keywordCount(keywords.length)}</span>
                 )}
                 {isCustom && (
-                  <span className="text-xs text-gray-300 border border-gray-200 rounded px-1">カスタム</span>
+                  <span className="text-xs text-gray-300 border border-gray-200 rounded px-1">{t.settings.customBadge}</span>
                 )}
               </div>
               <span className="text-gray-400 text-xs">{isOpen ? '▲' : '▼'}</span>
@@ -95,10 +97,10 @@ export default function CategorySettings() {
                       value={kwInput}
                       onChange={(e) => setKwInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddKeyword(cat)}
-                      placeholder="キーワードを追加（例: マツキヨ）"
+                      placeholder={t.settings.keywordPlaceholder}
                       className="flex-1 text-xs border border-gray-200 rounded px-2 py-1.5 outline-none bg-white"
                     />
-                    <button onClick={() => handleAddKeyword(cat)} className="text-xs bg-gray-900 text-white px-3 py-1.5 rounded outline-none">追加</button>
+                    <button onClick={() => handleAddKeyword(cat)} className="text-xs bg-gray-900 text-white px-3 py-1.5 rounded outline-none">{t.settings.add}</button>
                   </div>
                 )}
 
@@ -108,7 +110,7 @@ export default function CategorySettings() {
                     onClick={() => { removeCustomCategory(cat); reload(); if (openCat === cat) setOpenCat(null); }}
                     className="text-xs text-red-400 border border-red-200 px-2 py-1 rounded outline-none"
                   >
-                    このカテゴリを削除
+                    {t.settings.deleteCategory}
                   </button>
                 )}
               </div>
@@ -124,10 +126,10 @@ export default function CategorySettings() {
           value={newCatInput}
           onChange={(e) => setNewCatInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
-          placeholder="新しいカテゴリ名"
+          placeholder={t.settings.newCategoryPlaceholder}
           className="flex-1 text-xs border border-gray-200 rounded px-2 py-1.5 outline-none bg-white"
         />
-        <button onClick={handleAddCategory} className="text-xs bg-gray-900 text-white px-3 py-1.5 rounded outline-none">追加</button>
+        <button onClick={handleAddCategory} className="text-xs bg-gray-900 text-white px-3 py-1.5 rounded outline-none">{t.settings.add}</button>
       </div>
     </div>
   );

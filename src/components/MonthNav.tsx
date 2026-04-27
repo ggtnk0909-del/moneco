@@ -1,5 +1,7 @@
 'use client';
 
+import { useT } from '@/i18n';
+
 interface Props {
   month: string;        // "YYYY-MM"
   availableMonths: string[];
@@ -7,12 +9,13 @@ interface Props {
 }
 
 export default function MonthNav({ month, availableMonths, onChange }: Props) {
+  const t = useT();
   const idx = availableMonths.indexOf(month);
   const canPrev = idx > 0;
   const canNext = idx < availableMonths.length - 1;
 
   const [year, m] = month.split('-');
-  const label = `${year}年${parseInt(m, 10)}月`;
+  const label = t.settings.monthLabel(year, parseInt(m, 10));
 
   return (
     <div className="flex items-center gap-2 text-sm">

@@ -1,8 +1,9 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { parseCSV } from '@/lib/csv/parser';
+import { parseCSV, type ParseErrorCode } from '@/lib/csv/parser';
 import { saveTransactions, StorageFullError, toMonthStr } from '@/lib/storage/store';
+import { useT } from '@/i18n';
 import type { Transaction } from '@/types';
 
 interface Props {
@@ -11,9 +12,17 @@ interface Props {
 }
 
 export default function CSVUpload({ onImported, compact }: Props) {
+  const t = useT();
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const parseErrorMessages: Record<ParseErrorCode, string> = {
+    csvParseFailed: t.errors.csvParseFailed,
+    noDataRows: t.errors.noDataRows,
+    unsupportedFormat: t.errors.unsupportedFormat,
+    noValidTransactions: t.errors.noValidTransactions,
+  };
 
   async function handleFile(file: File) {
     setLoading(true);
@@ -32,7 +41,7 @@ export default function CSVUpload({ onImported, compact }: Props) {
       const result = parseCSV(text);
 
       if (!result.ok) {
-        setError(result.error);
+        setError(parseErrorMessages[result.error]);
         return;
       }
 
@@ -59,9 +68,9 @@ export default function CSVUpload({ onImported, compact }: Props) {
       console.info(`[moneco] ${result.bankName} ${result.transactions.length}件 ${monthCount}ヶ月分 ${skippedMsg}`);
     } catch (e) {
       if (e instanceof StorageFullError) {
-        setError(e.message);
+        setError(t.errors.storageFull);
       } else {
-        setError('読み込みに失敗しました。');
+        setError(t.errors.loadFailed);
         console.error(e);
       }
     } finally {
@@ -88,7 +97,7 @@ export default function CSVUpload({ onImported, compact }: Props) {
           className="w-full text-xs text-gray-400 py-2 border border-dashed border-gray-200 rounded-md hover:border-gray-400 hover:text-gray-600 transition-colors"
           onClick={() => inputRef.current?.click()}
         >
-          {loading ? '読み込み中...' : '+ CSVを追加'}
+          {loading ? t.upload.loading : t.upload.addMore}
         </button>
       ) : (
         <div
@@ -99,12 +108,12 @@ export default function CSVUpload({ onImported, compact }: Props) {
         >
           <div className="text-3xl mb-2">📂</div>
           <div className="text-sm font-bold text-gray-700 mb-1">
-            {loading ? '読み込み中...' : '銀行CSVをタップしてアップロード'}
+            {loading ? t.upload.loading : t.upload.tap}
           </div>
-          <div className="text-xs text-gray-500">三菱UFJ・三井住友・ゆうちょ銀行</div>
-          <div className="text-xs text-gray-500">楽天・三井住友・JCB・イオン・dカード</div>
+          <div className="text-xs text-gray-500">{t.upload.bankList}</div>
+          <div className="text-xs text-gray-500">{t.upload.cardList}</div>
           <div className="inline-block mt-2 px-3 py-0.5 bg-green-50 border border-green-400 rounded-full text-xs text-green-800">
-            ✓ データはデバイスから出ません
+            {t.upload.privacyBadge}
           </div>
         </div>
       )}

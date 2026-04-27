@@ -4,9 +4,15 @@ import { detectFormat, parseDate, parseAmount } from './formats/index';
 import { classify } from '../category/classifier';
 import { loadCustomRules } from '../category/customRules';
 
+export type ParseErrorCode =
+  | 'csvParseFailed'
+  | 'noDataRows'
+  | 'unsupportedFormat'
+  | 'noValidTransactions';
+
 export type ParseResult =
   | { ok: true; transactions: Transaction[]; bankName: string; skipped: number }
-  | { ok: false; error: string };
+  | { ok: false; error: ParseErrorCode };
 
 export function parseCSV(text: string): ParseResult {
   // BOM除去
@@ -17,22 +23,18 @@ export function parseCSV(text: string): ParseResult {
   });
 
   if (result.errors.length > 0 && result.data.length === 0) {
-    return { ok: false, error: 'CSVの読み込みに失敗しました。' };
+    return { ok: false, error: 'csvParseFailed' };
   }
 
   const rows = result.data as string[][];
   if (rows.length < 2) {
-    return { ok: false, error: 'データ行がありません。' };
+    return { ok: false, error: 'noDataRows' };
   }
 
   const headers = rows[0];
   const fmt = detectFormat(headers);
   if (!fmt) {
-    return {
-      ok: false,
-      error:
-        'このCSVフォーマットは現在未対応です。三菱UFJ・三井住友・ゆうちょのCSVをお使いください。',
-    };
+    return { ok: false, error: 'unsupportedFormat' };
   }
 
   const headerRows = fmt.headerRows ?? 1;
@@ -74,7 +76,7 @@ export function parseCSV(text: string): ParseResult {
   }
 
   if (transactions.length === 0) {
-    return { ok: false, error: '有効な取引データが見つかりませんでした。' };
+    return { ok: false, error: 'noValidTransactions' };
   }
 
   return {

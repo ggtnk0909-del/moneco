@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useT } from '@/i18n';
 import type { Transaction, MonthSummary } from '@/types';
 import {
   loadMonths,
@@ -47,6 +48,7 @@ function computeSummary(month: string, transactions: Transaction[]): MonthSummar
 type Tab = 'graph' | 'list' | 'settings';
 
 export default function Home() {
+  const t = useT();
   const [months, setMonths] = useState<string[]>([]);
   const [currentMonth, setCurrentMonth] = useState<string>('');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -173,7 +175,7 @@ export default function Home() {
       <div className="w-full max-w-sm bg-white min-h-screen flex flex-col shadow-lg">
         {/* Header */}
         <header className="bg-gray-900 text-white px-4 py-3">
-          <span className="text-lg font-black tracking-tight">moneco</span>
+          <span className="text-lg font-black tracking-tight">{t.appName}</span>
         </header>
 
         {/* Banners */}
@@ -194,13 +196,13 @@ export default function Home() {
                 <>
                   {/* サマリーカード（常に全データ） */}
                   <div className="border border-gray-200 rounded-md p-3">
-                    <div className="text-xs text-gray-500 mb-1 text-center">今月の支出</div>
+                    <div className="text-xs text-gray-500 mb-1 text-center">{t.summary.thisMonth}</div>
                     <div className="text-lg font-bold text-gray-900 text-center tabular-nums">
                       ¥{(currentSummary?.total ?? 0).toLocaleString()}
                     </div>
                     {diff !== null && (
                       <div className={`text-xs text-center ${diff > 0 ? 'text-red-500' : 'text-green-600'}`}>
-                        {diff > 0 ? '▲' : '▼'} 先月比 {diff > 0 ? '+' : ''}¥{Math.abs(diff).toLocaleString()}
+                        {t.summary.vsLastMonth(diff)}
                       </div>
                     )}
                     {currentSummary && (currentSummary.bySource.bank > 0 || currentSummary.bySource.card > 0) && (
@@ -209,7 +211,7 @@ export default function Home() {
                           <div className="flex-1 text-center">
                             <div className="flex items-center justify-center gap-1 mb-0.5">
                               <div className="w-2 h-2 rounded-sm bg-gray-900" />
-                              <span className="text-xs text-gray-500">銀行</span>
+                              <span className="text-xs text-gray-500">{t.summary.bank}</span>
                             </div>
                             <div className="text-sm font-bold text-gray-800 tabular-nums">
                               ¥{currentSummary.bySource.bank.toLocaleString()}
@@ -220,7 +222,7 @@ export default function Home() {
                           <div className="flex-1 text-center">
                             <div className="flex items-center justify-center gap-1 mb-0.5">
                               <div className="w-2 h-2 rounded-sm bg-gray-500" />
-                              <span className="text-xs text-gray-500">カード</span>
+                              <span className="text-xs text-gray-500">{t.summary.card}</span>
                             </div>
                             <div className="text-sm font-bold text-gray-800 tabular-nums">
                               ¥{currentSummary.bySource.card.toLocaleString()}
@@ -259,7 +261,7 @@ export default function Home() {
                               disabled={!canOlder}
                               className="text-xs text-gray-400 disabled:opacity-30 outline-none py-2 px-3"
                             >
-                              ‹ 前の月
+                              {t.chart.olderMonths}
                             </button>
                             <span className="text-xs text-gray-300">
                               {months[winStart].slice(0, 7).replace('-', '/')} 〜 {months[winEnd].slice(0, 7).replace('-', '/')}
@@ -269,7 +271,7 @@ export default function Home() {
                               disabled={!canNewer}
                               className="text-xs text-gray-400 disabled:opacity-30 outline-none py-2 px-3"
                             >
-                              次の月 ›
+                              {t.chart.newerMonths}
                             </button>
                           </div>
                         )}
@@ -285,7 +287,7 @@ export default function Home() {
                                     : 'bg-white text-gray-500 border-gray-300'
                                 }`}
                               >
-                                {f === 'all' ? 'すべて' : f === 'bank' ? '銀行' : 'カード'}
+                                {f === 'all' ? t.summary.all : f === 'bank' ? t.summary.bank : t.summary.card}
                               </button>
                             ))}
                           </div>
@@ -309,7 +311,7 @@ export default function Home() {
                 </>
               ) : (
                 <div className="bg-yellow-50 border border-yellow-200 rounded p-3 text-xs text-yellow-800">
-                  💡 登録不要。CSVをドロップするだけでグラフが表示されます。
+                  {t.upload.hint}
                 </div>
               )}
             </div>
@@ -333,7 +335,7 @@ export default function Home() {
                       ‹
                     </button>
                     <span className="text-sm font-medium text-gray-700 w-24 text-center">
-                      {y}年{parseInt(m, 10)}月
+                      {t.settings.monthLabel(y, parseInt(m, 10))}
                     </span>
                     <button
                       onClick={() => canNext && setCurrentMonth(months[idx + 1])}
@@ -348,8 +350,8 @@ export default function Home() {
               {transactions.length === 0 ? (
                 <div className="text-center py-12 space-y-2">
                   <div className="text-gray-300 text-3xl">📂</div>
-                  <div className="text-sm text-gray-500">この月のデータがありません</div>
-                  <div className="text-xs text-gray-400">グラフタブからCSVを読み込んでください</div>
+                  <div className="text-sm text-gray-500">{t.list.noData}</div>
+                  <div className="text-xs text-gray-400">{t.list.noDataHint}</div>
                 </div>
               ) : (
                 <div className="space-y-1">
@@ -405,21 +407,21 @@ export default function Home() {
             <div className="p-4 space-y-6">
               {/* カテゴリ設定 */}
               <div>
-                <div className="text-sm font-bold text-gray-700 mb-1">カテゴリ設定</div>
-                <p className="text-xs text-gray-400 mb-3">カテゴリごとにキーワードを追加すると、明細の自動分類精度が上がります。</p>
+                <div className="text-sm font-bold text-gray-700 mb-1">{t.settings.categoryTitle}</div>
+                <p className="text-xs text-gray-400 mb-3">{t.settings.categoryDescription}</p>
                 <CategorySettings />
               </div>
 
               {/* データ管理 */}
               <div>
-                <div className="text-sm font-bold text-gray-700 mb-1">データ管理</div>
+                <div className="text-sm font-bold text-gray-700 mb-1">{t.settings.dataTitle}</div>
                 <div className="text-xs text-gray-500 space-y-1 mb-3">
-                  <p>すべてのデータはこのデバイスにのみ保存されます。</p>
-                  <p>サーバーには何も送信されません。</p>
+                  <p>{t.settings.localOnly}</p>
+                  <p>{t.settings.noServer}</p>
                 </div>
               </div>
               <div>
-                  <div className="text-xs font-bold text-gray-600 mb-2">保存済み月</div>
+                  <div className="text-xs font-bold text-gray-600 mb-2">{t.settings.savedMonths}</div>
                   {[...months].reverse().map((m) => {
                     const txns = loadTransactions(m);
                     const hasBank = txns.some((t) => t.source === 'bank');
@@ -434,16 +436,16 @@ export default function Home() {
                       <div key={m} className="py-2 border-b border-gray-100">
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-700">
-                            {m.slice(0, 4)}年{parseInt(m.slice(5), 10)}月
+                            {t.settings.monthLabel(m.slice(0, 4), parseInt(m.slice(5), 10))}
                           </span>
                           {isConfirmMonth ? (
                             <div className="flex gap-1">
-                              <button onClick={() => handleDeleteMonth(m)} className="px-2 py-1 text-xs bg-red-600 text-white rounded outline-none">削除する</button>
-                              <button onClick={() => setConfirmDelete(null)} className="px-2 py-1 text-xs border border-gray-300 text-gray-500 rounded outline-none">戻す</button>
+                              <button onClick={() => handleDeleteMonth(m)} className="px-2 py-1 text-xs bg-red-600 text-white rounded outline-none">{t.settings.confirmDelete}</button>
+                              <button onClick={() => setConfirmDelete(null)} className="px-2 py-1 text-xs border border-gray-300 text-gray-500 rounded outline-none">{t.settings.cancelDelete}</button>
                             </div>
                           ) : (
                             <button onClick={() => setConfirmDelete({ type: 'month', month: m })} className="text-xs text-gray-400 border border-gray-200 px-2 py-1 rounded outline-none">
-                              月ごと削除
+                              {t.settings.deleteMonth}
                             </button>
                           )}
                         </div>
@@ -453,14 +455,14 @@ export default function Home() {
                           <div className="mt-1.5 flex gap-2">
                             <div className="flex items-center gap-1.5 flex-1">
                               <div className="w-2 h-2 rounded-sm bg-gray-900 flex-shrink-0" />
-                              <span className="text-xs text-gray-500">銀行 {bankCount}件</span>
+                              <span className="text-xs text-gray-500">{t.settings.bankCount(bankCount)}</span>
                               {isConfirmBank ? (
                                 <div className="flex gap-1 ml-auto">
-                                  <button onClick={() => handleDeleteBySource(m, 'bank')} className="px-2 py-0.5 text-xs bg-red-600 text-white rounded outline-none">削除する</button>
-                                  <button onClick={() => setConfirmDelete(null)} className="px-2 py-0.5 text-xs border border-gray-300 text-gray-500 rounded outline-none">戻す</button>
+                                  <button onClick={() => handleDeleteBySource(m, 'bank')} className="px-2 py-0.5 text-xs bg-red-600 text-white rounded outline-none">{t.settings.confirmDelete}</button>
+                                  <button onClick={() => setConfirmDelete(null)} className="px-2 py-0.5 text-xs border border-gray-300 text-gray-500 rounded outline-none">{t.settings.cancelDelete}</button>
                                 </div>
                               ) : (
-                                <button onClick={() => setConfirmDelete({ type: 'source', month: m, source: 'bank' })} className="ml-auto text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded outline-none">削除</button>
+                                <button onClick={() => setConfirmDelete({ type: 'source', month: m, source: 'bank' })} className="ml-auto text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded outline-none">{t.settings.deleteSource}</button>
                               )}
                             </div>
                           </div>
@@ -469,14 +471,14 @@ export default function Home() {
                           <div className="mt-1 flex gap-2">
                             <div className="flex items-center gap-1.5 flex-1">
                               <div className="w-2 h-2 rounded-sm bg-gray-500 flex-shrink-0" />
-                              <span className="text-xs text-gray-500">カード {cardCount}件</span>
+                              <span className="text-xs text-gray-500">{t.settings.cardCount(cardCount)}</span>
                               {isConfirmCard ? (
                                 <div className="flex gap-1 ml-auto">
-                                  <button onClick={() => handleDeleteBySource(m, 'card')} className="px-2 py-0.5 text-xs bg-red-600 text-white rounded outline-none">削除する</button>
-                                  <button onClick={() => setConfirmDelete(null)} className="px-2 py-0.5 text-xs border border-gray-300 text-gray-500 rounded outline-none">戻す</button>
+                                  <button onClick={() => handleDeleteBySource(m, 'card')} className="px-2 py-0.5 text-xs bg-red-600 text-white rounded outline-none">{t.settings.confirmDelete}</button>
+                                  <button onClick={() => setConfirmDelete(null)} className="px-2 py-0.5 text-xs border border-gray-300 text-gray-500 rounded outline-none">{t.settings.cancelDelete}</button>
                                 </div>
                               ) : (
-                                <button onClick={() => setConfirmDelete({ type: 'source', month: m, source: 'card' })} className="ml-auto text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded outline-none">削除</button>
+                                <button onClick={() => setConfirmDelete({ type: 'source', month: m, source: 'card' })} className="ml-auto text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded outline-none">{t.settings.deleteSource}</button>
                               )}
                             </div>
                           </div>
@@ -492,13 +494,13 @@ export default function Home() {
                           onClick={handleDeleteAll}
                           className="flex-1 py-2 text-sm bg-red-600 text-white rounded outline-none"
                         >
-                          すべて削除する
+                          {t.settings.confirmDeleteAll}
                         </button>
                         <button
                           onClick={() => setConfirmDelete(null)}
                           className="flex-1 py-2 text-sm border border-gray-300 text-gray-500 rounded outline-none"
                         >
-                          キャンセル
+                          {t.settings.cancelDeleteAll}
                         </button>
                       </div>
                     ) : (
@@ -506,7 +508,7 @@ export default function Home() {
                         onClick={() => setConfirmDelete({ type: 'all' })}
                         className="w-full py-2 text-sm text-red-500 border border-red-200 rounded outline-none"
                       >
-                        すべてのデータを削除
+                        {t.settings.deleteAll}
                       </button>
                     )}
                   </div>
@@ -520,9 +522,9 @@ export default function Home() {
         <nav className="border-t border-gray-200 flex">
           {(
             [
-              { key: 'graph', icon: '📊', label: 'グラフ' },
-              { key: 'list', icon: '📋', label: '明細' },
-              { key: 'settings', icon: '⚙️', label: '設定' },
+              { key: 'graph', icon: '📊', label: t.nav.graph },
+              { key: 'list', icon: '📋', label: t.nav.list },
+              { key: 'settings', icon: '⚙️', label: t.nav.settings },
             ] as const
           ).map(({ key, icon, label }) => (
             <button
