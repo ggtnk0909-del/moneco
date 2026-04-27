@@ -77,6 +77,14 @@ const ja = {
     adPlaceholder: '広告スペース（320×50）',
   },
 
+  auth: {
+    login: 'ログイン',
+    logout: 'ログアウト',
+    freeTierRemaining: (n: number) => `今月あと${n}枚無料`,
+    upgradePlan: 'プランをアップグレード',
+    visionFeatureLabel: 'スクショ解析（Pro）',
+  },
+
   errors: {
     csvParseFailed: 'CSVの読み込みに失敗しました。',
     noDataRows: 'データ行がありません。',

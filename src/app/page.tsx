@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { useT } from '@/i18n';
 import type { Transaction, MonthSummary } from '@/types';
 import {
@@ -21,6 +22,7 @@ import AdBanner from '@/components/AdBanner';
 import CategorySettings from '@/components/CategorySettings';
 import IOSInstallBanner from '@/components/IOSInstallBanner';
 import StorageCapacityBanner from '@/components/StorageCapacityBanner';
+import AuthButton from '@/components/AuthButton';
 
 function computeSummary(month: string, transactions: Transaction[]): MonthSummary {
   const expenses = transactions.filter((t) => t.amount > 0);
@@ -49,6 +51,7 @@ type Tab = 'graph' | 'list' | 'settings';
 
 export default function Home() {
   const t = useT();
+  const { isSignedIn } = useUser();
   const [months, setMonths] = useState<string[]>([]);
   const [currentMonth, setCurrentMonth] = useState<string>('');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -174,8 +177,9 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100 flex justify-center">
       <div className="w-full max-w-sm bg-white min-h-screen flex flex-col shadow-lg">
         {/* Header */}
-        <header className="bg-gray-900 text-white px-4 py-3">
+        <header className="bg-gray-900 text-white px-4 py-3 flex items-center justify-between">
           <span className="text-lg font-black tracking-tight">{t.appName}</span>
+          <AuthButton isSignedIn={!!isSignedIn} />
         </header>
 
         {/* Banners */}
