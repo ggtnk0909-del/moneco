@@ -8,7 +8,8 @@ vi.mock('@clerk/nextjs', () => ({
   SignInButton: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="sign-in-button">{children}</div>
   ),
-  UserButton: ({ appearance }: { appearance?: unknown }) => (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  UserButton: ({ appearance: _a }: { appearance?: unknown }) => (
     <div data-testid="user-button" />
   ),
 }));
@@ -31,8 +32,8 @@ describe('AuthButton', () => {
     vi.mocked(useUser).mockReturnValue({
       isLoaded: false,
       isSignedIn: undefined,
-      user: null,
-    } as ReturnType<typeof useUser>);
+      user: undefined,
+    } as unknown as ReturnType<typeof useUser>);
 
     const { container } = render(<AuthButton />);
     expect(container.firstChild).toBeNull();
@@ -42,8 +43,8 @@ describe('AuthButton', () => {
     vi.mocked(useUser).mockReturnValue({
       isLoaded: true,
       isSignedIn: false,
-      user: null,
-    } as ReturnType<typeof useUser>);
+      user: undefined,
+    } as unknown as ReturnType<typeof useUser>);
 
     render(<AuthButton />);
     expect(screen.getByTestId('sign-in-button')).toBeInTheDocument();
