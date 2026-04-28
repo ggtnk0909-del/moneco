@@ -12,12 +12,14 @@ import {
   allCategories,
   type CustomRules,
 } from '@/lib/category/customRules';
+import { loadFixedCategories, toggleFixedCategory } from '@/lib/category/fixedCosts';
 import { useT } from '@/i18n';
 
 export default function CategorySettings() {
   const t = useT();
   const [rules, setRules] = useState<CustomRules | null>(null);
   const [cats, setCats] = useState<string[]>([]);
+  const [fixedCats, setFixedCats] = useState<Set<string>>(new Set());
   const [openCat, setOpenCat] = useState<string | null>(null);
   const [kwInput, setKwInput] = useState('');
   const [newCatInput, setNewCatInput] = useState('');
@@ -26,6 +28,12 @@ export default function CategorySettings() {
   function reload() {
     setRules(loadCustomRules());
     setCats(allCategories());
+    setFixedCats(loadFixedCategories());
+  }
+
+  function handleToggleFixed(cat: string) {
+    toggleFixedCategory(cat);
+    setFixedCats(loadFixedCategories());
   }
 
   useEffect(() => { reload(); }, []);
@@ -56,13 +64,15 @@ export default function CategorySettings() {
         const isOpen = openCat === cat;
         const isCustom = !DEFAULT_CATEGORIES.includes(cat);
 
+        const isFixed = fixedCats.has(cat);
+
         return (
           <div key={cat} className="border border-gray-200 rounded-md overflow-hidden">
-            <button
-              onClick={() => { setOpenCat(isOpen ? null : cat); setKwInput(''); }}
-              className="w-full flex items-center justify-between px-3 py-2.5 outline-none text-left"
-            >
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between px-3 py-2.5">
+              <button
+                onClick={() => { setOpenCat(isOpen ? null : cat); setKwInput(''); }}
+                className="flex items-center gap-2 flex-1 text-left outline-none"
+              >
                 <span className="text-sm text-gray-800">{cat}</span>
                 {keywords.length > 0 && (
                   <span className="text-xs text-gray-400">{t.settings.keywordCount(keywords.length)}</span>
@@ -70,9 +80,28 @@ export default function CategorySettings() {
                 {isCustom && (
                   <span className="text-xs text-gray-300 border border-gray-200 rounded px-1">{t.settings.customBadge}</span>
                 )}
+              </button>
+              <div className="flex items-center gap-1.5">
+                {cat !== 'その他' && (
+                  <button
+                    onClick={() => handleToggleFixed(cat)}
+                    className={`text-xs px-1.5 py-0.5 rounded border outline-none ${
+                      isFixed
+                        ? 'bg-gray-900 text-white border-gray-900'
+                        : 'text-gray-300 border-gray-200'
+                    }`}
+                  >
+                    {t.settings.fixedBadge}
+                  </button>
+                )}
+                <button
+                  onClick={() => { setOpenCat(isOpen ? null : cat); setKwInput(''); }}
+                  className="text-gray-400 text-xs outline-none px-1"
+                >
+                  {isOpen ? '▲' : '▼'}
+                </button>
               </div>
-              <span className="text-gray-400 text-xs">{isOpen ? '▲' : '▼'}</span>
-            </button>
+            </div>
 
             {isOpen && (
               <div className="border-t border-gray-100 bg-gray-50 px-3 py-2 space-y-2">

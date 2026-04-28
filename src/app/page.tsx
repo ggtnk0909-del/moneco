@@ -19,6 +19,7 @@ import MonthlyBarChart from '@/components/BarChart';
 import CategoryPieChart from '@/components/PieChart';
 import AdBanner from '@/components/AdBanner';
 import CategorySettings from '@/components/CategorySettings';
+import BudgetSummary from '@/components/BudgetSummary';
 import IOSInstallBanner from '@/components/IOSInstallBanner';
 import StorageCapacityBanner from '@/components/StorageCapacityBanner';
 
@@ -194,6 +195,11 @@ export default function Home() {
               {/* Summary cards */}
               {hasData ? (
                 <>
+                  {/* 来月の予算ガイド */}
+                  {currentSummary && (
+                    <BudgetSummary currentSummary={currentSummary} />
+                  )}
+
                   {/* サマリーカード（常に全データ） */}
                   <div className="border border-gray-200 rounded-md p-3">
                     <div className="text-xs text-gray-500 mb-1 text-center">{t.summary.thisMonth}</div>

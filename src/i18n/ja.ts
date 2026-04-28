@@ -66,6 +66,14 @@ const ja = {
     bankCount: (n: number) => `銀行 ${n}件`,
     cardCount: (n: number) => `カード ${n}件`,
     monthLabel: (year: string, month: number) => `${year}年${month}月`,
+    fixedBadge: '固定費',
+  },
+
+  budget: {
+    title: '来月の予算ガイド',
+    fixed: '固定費',
+    variable: '変動費',
+    forecast: (amount: number) => `→ 来月見込み ¥${amount.toLocaleString()}`,
   },
 
   banners: {
