@@ -19,7 +19,7 @@ export default function IOSInstallBanner() {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     const dismissed = sessionStorage.getItem('moneco:ios-banner-dismissed');
     if (isIOS && !isStandalone && !dismissed) {
-      setShow(true);
+      setShow(true); // eslint-disable-line react-hooks/set-state-in-effect -- browser APIs require useEffect
     }
   }, []);
 

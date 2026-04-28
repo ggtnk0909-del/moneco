@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import type { MonthSummary, Category } from '@/types';
+import type { MonthSummary } from '@/types';
 import { useT } from '@/i18n';
 
 const SELECTED_COLOR = '#1a1a1a';

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { DEFAULT_CATEGORIES } from '@/types';
 import type { Category } from '@/types';
 import {
@@ -16,8 +16,8 @@ import { useT } from '@/i18n';
 
 export default function CategorySettings() {
   const t = useT();
-  const [rules, setRules] = useState<CustomRules | null>(null);
-  const [cats, setCats] = useState<string[]>([]);
+  const [rules, setRules] = useState<CustomRules | null>(() => loadCustomRules());
+  const [cats, setCats] = useState<string[]>(() => allCategories());
   const [openCat, setOpenCat] = useState<string | null>(null);
   const [kwInput, setKwInput] = useState('');
   const [newCatInput, setNewCatInput] = useState('');
@@ -27,8 +27,6 @@ export default function CategorySettings() {
     setRules(loadCustomRules());
     setCats(allCategories());
   }
-
-  useEffect(() => { reload(); }, []);
 
   if (!rules) return null;
 
