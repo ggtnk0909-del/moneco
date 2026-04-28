@@ -1,23 +1,24 @@
 'use client';
 
-import { SignInButton, UserButton } from '@clerk/nextjs';
+import { SignInButton, UserButton, useUser } from '@clerk/nextjs';
 import { useT } from '@/i18n';
 
-interface Props {
-  isSignedIn: boolean;
-}
+const userButtonAppearance = {
+  elements: {
+    avatarBox: 'w-7 h-7',
+  },
+} as const;
 
-export default function AuthButton({ isSignedIn }: Props) {
+export default function AuthButton() {
   const t = useT();
+  const { isSignedIn, isLoaded } = useUser();
+
+  if (!isLoaded) return null;
 
   if (isSignedIn) {
     return (
       <UserButton
-        appearance={{
-          elements: {
-            avatarBox: 'w-7 h-7',
-          },
-        }}
+        appearance={userButtonAppearance}
       />
     );
   }

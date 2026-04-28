@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useUser } from '@clerk/nextjs';
 import { useT } from '@/i18n';
 import type { Transaction, MonthSummary } from '@/types';
 import {
@@ -51,7 +50,6 @@ type Tab = 'graph' | 'list' | 'settings';
 
 export default function Home() {
   const t = useT();
-  const { isSignedIn } = useUser();
   const [months, setMonths] = useState<string[]>([]);
   const [currentMonth, setCurrentMonth] = useState<string>('');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -179,7 +177,7 @@ export default function Home() {
         {/* Header */}
         <header className="bg-gray-900 text-white px-4 py-3 flex items-center justify-between">
           <span className="text-lg font-black tracking-tight">{t.appName}</span>
-          <AuthButton isSignedIn={!!isSignedIn} />
+          <AuthButton />
         </header>
 
         {/* Banners */}
